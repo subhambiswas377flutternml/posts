@@ -10,9 +10,15 @@ abstract class PostDao {
     @Upsert
     abstract suspend fun upsert(posts: List<PostCacheDto>)
 
+    @Query("SELECT * FROM post_table WHERE id = :postId")
+    abstract suspend fun getById(postId: Int) : PostCacheDto
+
     @Query("SELECT * FROM post_table")
     abstract suspend fun getAllPosts(): List<PostCacheDto>
 
-    @Query("UPDATE post_table SET 'like' = NOT 'like' WHERE id = :postId")
-    abstract suspend fun modifyLike(postId: Int)
+    @Query("UPDATE post_table SET 'like' = 1 WHERE id = :postId")
+    abstract suspend fun like(postId: Int)
+
+    @Query("UPDATE post_table SET 'like' = 0 WHERE id = :postId")
+    abstract suspend fun unlike(postId: Int)
 }

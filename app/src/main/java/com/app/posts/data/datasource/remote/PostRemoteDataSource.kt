@@ -6,5 +6,6 @@ import retrofit2.http.Query
 
 interface PostRemoteDataSource {
     @GET("/posts")
-    suspend fun getPosts(@Query("_page") page: Int, @Query("_limit") limit: Int): List<PostDto>
+    suspend fun getPosts(@Query("_page") page: Int,
+                         @Query("_limit") limit: Int): List<PostDto>
 }

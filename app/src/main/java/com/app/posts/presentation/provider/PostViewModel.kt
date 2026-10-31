@@ -28,24 +28,36 @@ class PostViewModel @Inject constructor(
     private val fetchPost: FetchPost,
     private val modifyPost: ModifyPost
 ) : ViewModel() {
-    private val _postState : MutableState<PostState> = mutableStateOf<PostState>(value = PostState.Initial)
+    private val _postState: MutableState<PostState> =
+        mutableStateOf<PostState>(value = PostState.Initial)
     val postState: State<PostState> = _postState
 
     // Exception Handler
-    val exceptionHandler = CoroutineExceptionHandler{context, throwable->
+    val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
         _postState.value = PostState.Error()
     }
 
-    fun fetchPosts(){
+    fun fetchPosts() {
         _postState.value = PostState.Loading
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            try{
+            try {
                 val localPosts = getLocalPost()
                 _postState.value = PostState.Loaded(posts = localPosts)
 
                 val posts = fetchPost()
                 _postState.value = PostState.Loaded(posts = posts)
-            }catch(ex: Exception){
+            } catch (ex: Exception) {
+                throw ex
+            }
+        }
+    }
+
+    fun modifyPostById(postId: Int) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            try {
+                val posts = modifyPost(postId = postId)
+                _postState.value = PostState.Loaded(posts = posts)
+            } catch (ex: Exception) {
                 throw ex
             }
         }

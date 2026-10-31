@@ -2,6 +2,7 @@ package com.app.posts.data.repository
 
 import com.app.posts.data.datasource.local.PostDao
 import com.app.posts.data.datasource.remote.PostRemoteDataSource
+import com.app.posts.data.entity.PostCacheDto
 import com.app.posts.data.entity.PostDto
 import com.app.posts.data.entity.toCacheDto
 import com.app.posts.data.entity.toModel
@@ -15,9 +16,24 @@ class PostRepositoryImpl(
 ) : PostRepository {
     override suspend fun fetchAllPosts(): List<PostModel> {
         val posts: List<PostDto> = postRemoteDataSource.getPosts(page = 1, limit = 20)
-        val postLocal = posts.map { p-> p.toCacheDto() }.toList()
+        val postLocal:MutableList<PostCacheDto> = mutableListOf()
+        posts.forEach {
+            val isLiked: Boolean = isLiked(it.id)
+            postLocal.add(it.toCacheDto(isLike = isLiked))
+        }
+
         postDao.upsert(postLocal)
         return postLocal.map { p-> p.toModel() }.toList()
+    }
+
+    private suspend fun isLiked(postId:Int) :Boolean{
+        val localPosts = postDao.getAllPosts()
+        if(localPosts.isEmpty()){
+            return false
+        }else{
+            val post = localPosts.find { p-> p.id == postId }
+            return post?.like == true
+        }
     }
 
     override suspend fun getLocalPosts(): List<PostModel> {
@@ -26,7 +42,14 @@ class PostRepositoryImpl(
     }
 
     override suspend fun modifyPost(postId: Int) : List<PostModel> {
-        postDao.modifyLike(postId = postId)
-        return getLocalPosts()
+        val post: PostCacheDto = postDao.getById(postId = postId)
+        if(post.like){
+            postDao.unlike(postId = postId)
+        }else{
+            postDao.like(postId = postId)
+        }
+
+        val localPosts = getLocalPosts()
+        return localPosts
     }
 }

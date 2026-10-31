@@ -7,11 +7,12 @@ data class PostDto(
     val body: String
 )
 
-fun PostDto.toCacheDto() : PostCacheDto{
+fun PostDto.toCacheDto(isLike: Boolean) : PostCacheDto{
     return PostCacheDto(
         userId = this.userId,
         id = this.id,
         title = this.title,
-        body = this.body
+        body = this.body,
+        like = isLike,
     )
 }

@@ -16,7 +16,7 @@ data class PostCacheDto(
     @ColumnInfo
     val body: String,
     @ColumnInfo
-    val like: Boolean = false,
+    val like: Boolean,
 )
 
 fun PostCacheDto.toModel() : PostModel{

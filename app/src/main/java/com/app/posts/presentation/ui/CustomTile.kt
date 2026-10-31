@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,9 +23,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.posts.domain.model.PostModel
 
 @Composable
-fun CustomTile(){
+fun CustomTile(post: PostModel, modifyPost: (Int)->Unit){
     Card(modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors().copy(
         containerColor = Color.Blue
@@ -32,7 +34,7 @@ fun CustomTile(){
         Row(modifier = Modifier.wrapContentHeight().padding(16.dp)) {
             Column(modifier = Modifier. weight(1f)) {
                 Text(
-                    "Ttile",
+                    post.title,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     style = TextStyle(
@@ -43,7 +45,7 @@ fun CustomTile(){
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Subtitle",
+                    text = post.body,
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
                         fontWeight = FontWeight.Medium,
@@ -53,8 +55,10 @@ fun CustomTile(){
                 )
             }
 
-            IconButton(onClick = {}) {
-                Icon(Icons.Outlined.FavoriteBorder,
+            IconButton(onClick = {
+                modifyPost(post.id)
+            }) {
+                Icon( if(post.like) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = "",
                     tint = Color.White)
             }
