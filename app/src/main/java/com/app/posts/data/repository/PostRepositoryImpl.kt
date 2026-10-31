@@ -14,8 +14,8 @@ class PostRepositoryImpl(
     private val postRemoteDataSource: PostRemoteDataSource,
     private val postDao: PostDao
 ) : PostRepository {
-    override suspend fun fetchAllPosts(): List<PostModel> {
-        val posts: List<PostDto> = postRemoteDataSource.getPosts(page = 1, limit = 20)
+    override suspend fun fetchAllPosts(page:Int, limit:Int): List<PostModel> {
+        val posts: List<PostDto> = postRemoteDataSource.getPosts(page = page, limit = limit)
         val postLocal:MutableList<PostCacheDto> = mutableListOf()
         posts.forEach {
             val isLiked: Boolean = isLiked(it.id)

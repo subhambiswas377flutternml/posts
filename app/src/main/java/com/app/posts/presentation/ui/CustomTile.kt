@@ -34,6 +34,17 @@ fun CustomTile(post: PostModel, modifyPost: (Int)->Unit){
         Row(modifier = Modifier.wrapContentHeight().padding(16.dp)) {
             Column(modifier = Modifier. weight(1f)) {
                 Text(
+                    "Item ID : ${post.id}",
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = Color.White
+                    )
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
                     post.title,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
